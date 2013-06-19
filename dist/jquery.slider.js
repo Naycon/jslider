@@ -1168,7 +1168,7 @@ var Hashtable = (function() {
 
 /**
  * jquery.slider - Slider ui control in jQuery
- * 
+ *
  * Written by
  * Egor Khmelev (hmelyoff@gmail.com)
  *
@@ -1176,22 +1176,22 @@ var Hashtable = (function() {
  *
  * @author Egor Khmelev
  * @version 1.1.0-RELEASE ($Id$)
- * 
+ *
  * Dependencies
- * 
+ *
  * jQuery (http://jquery.com)
  * jquery.numberformatter (http://code.google.com/p/jquery-numberformatter/)
  * tmpl (http://ejohn.org/blog/javascript-micro-templating/)
  * jquery.dependClass
  * draggable
- * 
+ *
  **/
 
 (function( $ ) {
-  
+
   function isArray( value ){
     if( typeof value == "undefined" ) return false;
-    
+
     if (value instanceof Array || (!(value instanceof Object) &&
          (Object.prototype.toString.call((value)) == '[object Array]') ||
          typeof value.length == 'number' &&
@@ -1201,7 +1201,7 @@ var Hashtable = (function() {
         )) {
       return true;
     }
-    
+
     return false;
   }
 
@@ -1209,13 +1209,13 @@ var Hashtable = (function() {
 	  var jNode = $(node);
 	  if( !jNode.data( "jslider" ) )
 	    jNode.data( "jslider", new jSlider( node, settings ) );
-	  
+
 	  return jNode.data( "jslider" );
 	};
-	
+
 	$.fn.jslider = function( action, opt_value ){
 	  var returnValue, args = arguments;
-	  
+
 	  function isDef( val ){
 	    return val !== undefined;
 	  };
@@ -1223,10 +1223,10 @@ var Hashtable = (function() {
 	  function isDefAndNotNull( val ){
       return val != null;
 	  };
-	  
+
 		this.each(function(){
 		  var self = $.slider( this, action );
-		  
+
 		  // do actions
 		  if( typeof action == "string" ){
 		    switch( action ){
@@ -1237,13 +1237,13 @@ var Hashtable = (function() {
 		            pointers[0].set( args[ 1 ] );
 		            pointers[0].setIndexOver();
 		          }
-		          
+
 		          if( isDefAndNotNull( pointers[1] ) && isDefAndNotNull( args[2] ) ){
 		            pointers[1].set( args[ 2 ] );
 		            pointers[1].setIndexOver();
 		          }
 		        }
-		        
+
 		        else if( isDef( args[ 1 ] ) ){
 		          var pointers = self.getPointers();
 		          if( isDefAndNotNull( pointers[0] ) && isDefAndNotNull( args[1] ) ){
@@ -1251,7 +1251,7 @@ var Hashtable = (function() {
 		            pointers[0].setIndexOver();
 		          }
 		        }
-		        
+
 		        else
   		        returnValue = self.getValue();
 
@@ -1290,17 +1290,17 @@ var Hashtable = (function() {
   		      for (var i=0; i < value.length; i++) {
   		        returnValue += (i > 0 ? ";" : "") + self.nice( value[i] );
   		      };
-  		      
+
   		      break;
-  		      
+
   		    case "skin":
 		        self.setSkin( args[1] );
 
   		      break;
 		    };
-		  
+
 		  }
-		  
+
 		  // return actual object
 		  else if( !action && !opt_value ){
 		    if( !isArray( returnValue ) )
@@ -1309,18 +1309,18 @@ var Hashtable = (function() {
 		    returnValue.push( self );
 		  }
 		});
-		
+
 		// flatten array just with one slider
 		if( isArray( returnValue ) && returnValue.length == 1 )
 		  returnValue = returnValue[ 0 ];
-		
+
 		return returnValue || this;
 	};
-  
+
   if (!$.fn.slider) {
     $.fn.slider = $.fn.jslider;
   }
-  
+
   var OPTIONS = {
 
     settings: {
@@ -1332,9 +1332,10 @@ var Hashtable = (function() {
       round: 0,
       format: { format: "#,##0.##" },
       value: "5;7",
+      predimension: "",
       dimension: ""
     },
-    
+
     className: "jslider",
     selector: ".jslider-",
 
@@ -1348,19 +1349,19 @@ var Hashtable = (function() {
 
           '<div class="<%=className%>-pointer"></div>' +
           '<div class="<%=className%>-pointer <%=className%>-pointer-to"></div>' +
-        
-          '<div class="<%=className%>-label"><span><%=settings.from%></span></div>' +
-          '<div class="<%=className%>-label <%=className%>-label-to"><span><%=settings.to%></span><%=settings.dimension%></div>' +
 
-          '<div class="<%=className%>-value"><span></span><%=settings.dimension%></div>' +
-          '<div class="<%=className%>-value <%=className%>-value-to"><span></span><%=settings.dimension%></div>' +
-          
+          '<div class="<%=className%>-label"><span><%=settings.from%></span></div>' +
+          '<div class="<%=className%>-label <%=className%>-label-to"><%=settings.predimension%><span><%=settings.to%></span><%=settings.dimension%></div>' +
+
+          '<div class="<%=className%>-value"><div class="<%=className%>-value-label"><%=settings.predimension%><span></span><%=settings.dimension%></div></div>' +
+          '<div class="<%=className%>-value <%=className%>-value-to"><div class="<%=className%>-value-label <%=className%>-value-label-to"><%=settings.predimension%><span></span><%=settings.dimension%></div></div>' +
+
           '<div class="<%=className%>-scale"><%=scale%></div>'+
 
         '</td></tr></table>' +
       '</span>'
     )
-    
+
   };
 
   function jSlider(){
@@ -1369,19 +1370,19 @@ var Hashtable = (function() {
 
   jSlider.prototype.init = function( node, settings ){
     this.settings = $.extend(true, {}, OPTIONS.settings, settings ? settings : {});
-    
+
     // obj.sliderHandler = this;
     this.inputNode = $( node ).hide();
     if (this.inputNode.prop("tagName") !== 'INPUT') {
       throw "jquery.slider: Slider must only be applied to INPUT elements.";
     }
-    						
+
 		this.settings.interval = this.settings.to-this.settings.from;
 		this.settings.value = this.inputNode.attr("value");
 		if (this.settings.value === null || this.settings.value === undefined) {
 		  throw "jquery.slider: INPUT element does not have a value.";
 		}
-		
+
 		if( this.settings.calculate && $.isFunction( this.settings.calculate ) )
 		  this.nice = this.settings.calculate;
 
@@ -1395,27 +1396,28 @@ var Hashtable = (function() {
 
     this.create();
   };
-  
+
   jSlider.prototype.onstatechange = function(){
-    
+
   };
-  
+
   jSlider.prototype.create = function(){
     var $this = this;
-    
+
     this.domNode = $( OPTIONS.template({
       className: OPTIONS.className,
       settings: {
         from: this.nice( this.settings.from ),
         to: this.nice( this.settings.to ),
+        predimension: this.settings.predimension,
         dimension: this.settings.dimension
       },
       scale: this.generateScale()
     }) );
-    
+
     this.inputNode.after( this.domNode );
     this.drawScale();
-    
+
     // set skin class
     if( this.settings.skin && this.settings.skin.length > 0 )
       this.setSkin( this.settings.skin );
@@ -1450,7 +1452,7 @@ var Hashtable = (function() {
       value: this.o.labels[1].o.find("span")
     });
 
-    
+
     if( !$this.settings.value.split(";")[1] ){
       this.settings.single = true;
       this.domNode.addDependClass("single");
@@ -1469,18 +1471,18 @@ var Hashtable = (function() {
 
         value = value < $this.settings.from ? $this.settings.from : value;
         value = value > $this.settings.to ? $this.settings.to : value;
-      
+
         $this.o.pointers[i].set( value, true );
       }
     });
-    
+
     this.o.value = this.domNode.find(".v");
     this.is.init = true;
-    
+
     $.each(this.o.pointers, function(i){
       $this.redraw(this);
     });
-    
+
     (function(self){
       $(window).resize(function(){
         self.onresize();
@@ -1488,24 +1490,24 @@ var Hashtable = (function() {
     })(this);
 
   };
-  
+
   jSlider.prototype.setSkin = function( skin ){
     if( this.skin_ )
       this.domNode.removeDependClass( this.skin_, "_" );
 
     this.domNode.addDependClass( this.skin_ = skin, "_" );
   };
-  
+
   jSlider.prototype.setPointersIndex = function( i ){
     $.each(this.getPointers(), function(i){
       this.index( i );
     });
   };
-  
+
   jSlider.prototype.getPointers = function(){
     return this.o.pointers;
   };
-  
+
   jSlider.prototype.generateScale = function(){
     if( this.settings.scale && this.settings.scale.length > 0 ){
       var str = "";
@@ -1519,13 +1521,13 @@ var Hashtable = (function() {
 
     return "";
   };
-  
+
   jSlider.prototype.drawScale = function(){
     this.domNode.find(OPTIONS.selector + "scale span ins").each(function(){
       $(this).css({ marginLeft: -$(this).outerWidth()/2 });
     });
   };
-  
+
   jSlider.prototype.onresize = function(){
     var self = this;
 		this.sizes = {
@@ -1537,19 +1539,19 @@ var Hashtable = (function() {
       self.redraw(this);
     });
   };
-  
+
   jSlider.prototype.update = function(){
     this.onresize();
     this.drawScale();
   };
-  
+
   jSlider.prototype.limits = function( x, pointer ){
 	  // smooth
 	  if( !this.settings.smooth ){
 	    var step = this.settings.step*100 / ( this.settings.interval );
 	    x = Math.round( x/step ) * step;
 	  }
-	  
+
 	  var another = this.o.pointers[1-pointer.uid];
 	  if( another && pointer.uid && x < another.value.prc ) x = another.value.prc;
 	  if( another && !pointer.uid && x > another.value.prc ) x = another.value.prc;
@@ -1557,15 +1559,15 @@ var Hashtable = (function() {
     // base limit
 	  if( x < 0 ) x = 0;
 	  if( x > 100 ) x = 100;
-	  
+
     return Math.round( x*10 ) / 10;
   };
-  
+
   jSlider.prototype.redraw = function( pointer ){
     if( !this.is.init ) return false;
-    
+
     this.setValue();
-    
+
     // redraw range line
     if( this.o.pointers[0] && this.o.pointers[1] )
       this.o.value.css({ left: this.o.pointers[0].value.prc + "%", width: ( this.o.pointers[1].value.prc - this.o.pointers[0].value.prc ) + "%" });
@@ -1575,12 +1577,12 @@ var Hashtable = (function() {
         pointer.value.origin
       )
     );
-    
+
     // redraw position of labels
     this.redrawLabels( pointer );
 
   };
-  
+
   jSlider.prototype.redrawLabels = function( pointer ){
 
     function setPosition( label, sizes, prc ){
@@ -1597,7 +1599,7 @@ var Hashtable = (function() {
         sizes.right = true;
       } else
         sizes.right = false;
-        
+
       label.o.css({ left: prc + "%", marginLeft: sizes.margin, right: "auto" });
       if( sizes.right ) label.o.css({ left: "auto", right: 0 });
       return sizes;
@@ -1658,7 +1660,7 @@ var Hashtable = (function() {
     }
 
     sizes = setPosition( label, sizes, prc );
-    
+
     /* draw second label */
     if( another_label ){
       var sizes = {
@@ -1668,10 +1670,10 @@ var Hashtable = (function() {
   	  };
       sizes = setPosition( another_label, sizes, another.value.prc );
     }
-	  
+
     this.redrawLimits();
   };
-  
+
   jSlider.prototype.redrawLimits = function(){
 	  if( this.settings.limits ){
 
@@ -1680,7 +1682,7 @@ var Hashtable = (function() {
       for( key in this.o.pointers ){
 
         if( !this.settings.single || key == 0 ){
-        
+
       	  var pointer = this.o.pointers[key];
           var label = this.o.labels[pointer.uid];
           var label_left = label.o.offset().left - this.sizes.domOffset.left;
@@ -1705,7 +1707,7 @@ var Hashtable = (function() {
 
 	  }
   };
-  
+
   jSlider.prototype.setValue = function(){
     var value = this.getValue();
     this.inputNode.attr( "value", value );
@@ -1715,7 +1717,7 @@ var Hashtable = (function() {
   jSlider.prototype.getValue = function(){
     if(!this.is.init) return false;
     var $this = this;
-    
+
     var value = "";
     $.each( this.o.pointers, function(i){
       if( this.value.prc != undefined && !isNaN(this.value.prc) ) value += (i > 0 ? ";" : "") + $this.prcToValue( this.value.prc );
@@ -1726,14 +1728,14 @@ var Hashtable = (function() {
   jSlider.prototype.getPrcValue = function(){
     if(!this.is.init) return false;
     var $this = this;
-    
+
     var value = "";
     $.each( this.o.pointers, function(i){
       if( this.value.prc != undefined && !isNaN(this.value.prc) ) value += (i > 0 ? ";" : "") + this.value.prc;
     });
     return value;
   };
-  
+
   jSlider.prototype.prcToValue = function( prc ){
 
 	  if( this.settings.heterogeneity && this.settings.heterogeneity.length > 0 ){
@@ -1745,10 +1747,10 @@ var Hashtable = (function() {
   	  for( var i=0; i <= h.length; i++ ){
   	    if( h[i] ) var v = h[i].split("/");
   	    else       var v = [100, this.settings.to];
-  	    
+
   	    v[0] = new Number(v[0]);
   	    v[1] = new Number(v[1]);
-  	      
+
   	    if( prc >= _start && prc <= v[0] ) {
   	      var value = _from + ( (prc-_start) * (v[1]-_from) ) / (v[0]-_start);
   	    }
@@ -1763,8 +1765,8 @@ var Hashtable = (function() {
 
     return this.round( value );
   };
-  
-	jSlider.prototype.valueToPrc = function( value, pointer ){  	  
+
+	jSlider.prototype.valueToPrc = function( value, pointer ){
 	  if( this.settings.heterogeneity && this.settings.heterogeneity.length > 0 ){
   	  var h = this.settings.heterogeneity;
 
@@ -1775,7 +1777,7 @@ var Hashtable = (function() {
   	    if(h[i]) var v = h[i].split("/");
   	    else     var v = [100, this.settings.to];
   	    v[0] = new Number(v[0]); v[1] = new Number(v[1]);
-  	      
+
   	    if(value >= _from && value <= v[1]){
   	      var prc = pointer.limits(_start + (value-_from)*(v[0]-_start)/(v[1]-_from));
   	    }
@@ -1789,39 +1791,39 @@ var Hashtable = (function() {
 
 	  return prc;
 	};
-  
+
 	jSlider.prototype.round = function( value ){
     value = Math.round( value / this.settings.step ) * this.settings.step;
 		if( this.settings.round ) value = Math.round( value * Math.pow(10, this.settings.round) ) / Math.pow(10, this.settings.round);
 		else value = Math.round( value );
 		return value;
 	};
-	
+
 	jSlider.prototype.nice = function( value ){
 		value = value.toString().replace(/,/gi, ".").replace(/ /gi, "");;
 
 		if( $.formatNumber ){
 		  return $.formatNumber( new Number(value), this.settings.format || {} ).replace( /-/gi, "&minus;" );
 		}
-		  
+
 		else {
 		  return new Number(value);
 		}
 	};
 
-  
+
   function jSliderPointer(){
   	Draggable.apply( this, arguments );
   }
   jSliderPointer.prototype = new Draggable();
-  
+
   jSliderPointer.prototype.oninit = function( ptr, id, _constructor ){
     this.uid = id;
     this.parent = _constructor;
     this.value = {};
     this.settings = this.parent.settings;
   };
-  
+
   jSliderPointer.prototype.onmousedown = function(evt){
 	  this._parent = {
 	    offset: this.parent.domNode.offset(),
@@ -1835,27 +1837,27 @@ var Hashtable = (function() {
 	  var coords = this._getPageCoords( evt );
 	  this._set( this.calc( coords.x ) );
 	};
-	
+
 	jSliderPointer.prototype.onmouseup = function( evt ){
 	  if( this.parent.settings.callback && $.isFunction(this.parent.settings.callback) )
 	    this.parent.settings.callback.call( this.parent, this.parent.getValue() );
-	    
+
 	  this.ptr.removeDependClass("hover");
 	};
-	
+
 	jSliderPointer.prototype.setIndexOver = function(){
 	  this.parent.setPointersIndex( 1 );
 	  this.index( 2 );
 	};
-	
+
 	jSliderPointer.prototype.index = function( i ){
 	  this.ptr.css({ zIndex: i });
 	};
-	
+
 	jSliderPointer.prototype.limits = function( x ){
 	  return this.parent.limits( x, this );
 	};
-	
+
 	jSliderPointer.prototype.calc = function(coords){
 	  var x = this.limits(((coords-this._parent.offset.left)*100)/this._parent.width);
 	  return x;
@@ -1865,7 +1867,7 @@ var Hashtable = (function() {
 	  this.value.origin = this.parent.round(value);
 	  this._set( this.parent.valueToPrc( value, this ), opt_origin );
 	};
-	
+
 	jSliderPointer.prototype._set = function( prc, opt_origin ){
 	  if( !opt_origin )
 	    this.value.origin = this.parent.prcToValue(prc);
@@ -1874,5 +1876,5 @@ var Hashtable = (function() {
 		this.ptr.css({ left: prc + "%" });
 	  this.parent.redraw(this);
 	};
-  
+
 })(jQuery);
