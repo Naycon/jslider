@@ -1,6 +1,4 @@
 module.exports = function(grunt) {
-  grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.loadNpmTasks('grunt-contrib-concat');
 
   var cssMin = {
       src: 'dist/<%= pkg.name %>.css',
@@ -40,12 +38,14 @@ module.exports = function(grunt) {
         banner: '<%= banner %>'
       },
       amd: {
-        src: 'dist/<%= pkg.name %>.amd.js', // same as concat.amd.dest
-        dest: 'dist/<%= pkg.name %>.amd.min.js'
+        files: {
+          'dist/<%= pkg.name %>.amd.min.js': ['<%= concat.amd.dest %>']
+        }
       },
       main: {
-        src: 'dist/<%= pkg.name %>.js', // same as concat.main.dest
-        dest: 'dist/<%= pkg.name %>.min.js'
+        files: {
+          'dist/<%= pkg.name %>.min.js': ['<%= concat.main.dest %>']
+        }
       }
     },
     'min-css': {
@@ -82,5 +82,8 @@ module.exports = function(grunt) {
         }
         grunt.task.run(parts);
      });
+
+     grunt.loadNpmTasks('grunt-contrib-uglify');
+     grunt.loadNpmTasks('grunt-contrib-concat');
 
 };
