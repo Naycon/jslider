@@ -1,4 +1,6 @@
 module.exports = function(grunt) {
+  grunt.loadNpmTasks('grunt-contrib-uglify');
+  grunt.loadNpmTasks('grunt-contrib-concat');
 
   var cssMin = {
       src: 'dist/<%= pkg.name %>.css',
@@ -15,11 +17,9 @@ module.exports = function(grunt) {
 
   // Project configuration.
   grunt.initConfig({
-    pkg: '<json:package.json>',
-    meta: {
-        banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - ' +
-                '<%= grunt.template.today("yyyy-mm-dd") %> */'
-    },
+    pkg: grunt.file.readJSON('package.json'),
+    banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - ' +
+                '<%= grunt.template.today("yyyy-mm-dd") %> */',
     build: {main: {}, amd: {}, css: {}},
     concat: {
       amd: {
@@ -35,27 +35,29 @@ module.exports = function(grunt) {
         dest: 'dist/<%= pkg.name %>.css'
       }
     },
-    min: {
+    uglify: {
+      options: {
+        banner: '<%= banner %>'
+      },
       amd: {
-        src: ['<banner:meta.banner>', '<config:concat.amd.dest>'],
+        src: 'dist/<%= pkg.name %>.amd.js', // same as concat.amd.dest
         dest: 'dist/<%= pkg.name %>.amd.min.js'
       },
       main: {
-        src: ['<banner:meta.banner>', '<config:concat.main.dest>'],
+        src: 'dist/<%= pkg.name %>.js', // same as concat.main.dest
         dest: 'dist/<%= pkg.name %>.min.js'
       }
     },
     'min-css': {
       main: cssMin,
       amd: cssMin
-    },
-    uglify: {}
+    }
   });
 
   // Default task.
   grunt.registerTask('default', function() {
-      grunt.task.run(['build:main', 'build:amd']);
-    });
+    grunt.task.run(['build:main', 'build:amd']);
+  });
   grunt.registerMultiTask('min-css', 'Minify CSS', function() {
     var compressor = require('yuicompressor');
     compressor.compress(this.data.src, {
@@ -74,7 +76,7 @@ module.exports = function(grunt) {
   });
   grunt.registerMultiTask('build', '',
      function() {
-        var parts = ['concat', 'min', 'min-css'], i;
+        var parts = ['concat', 'uglify', 'min-css'], i;
         for (i=0; i<parts.length; i+=1) {
             parts[i] = parts[i] + ':' + this.target;
         }
