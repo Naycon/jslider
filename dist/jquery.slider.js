@@ -1234,12 +1234,12 @@ var Hashtable = (function() {
 		        if( isDef( args[ 1 ] ) && isDef( args[ 2 ] ) ){
 		          var pointers = self.getPointers();
 		          if( isDefAndNotNull( pointers[0] ) && isDefAndNotNull( args[1] ) ){
-		            pointers[0].set( args[ 1 ] );
+		            pointers[0].set( args[ 1 ], true );
 		            pointers[0].setIndexOver();
 		          }
 
 		          if( isDefAndNotNull( pointers[1] ) && isDefAndNotNull( args[2] ) ){
-		            pointers[1].set( args[ 2 ] );
+		            pointers[1].set( args[ 2 ], true );
 		            pointers[1].setIndexOver();
 		          }
 		        }
@@ -1247,7 +1247,7 @@ var Hashtable = (function() {
 		        else if( isDef( args[ 1 ] ) ){
 		          var pointers = self.getPointers();
 		          if( isDefAndNotNull( pointers[0] ) && isDefAndNotNull( args[1] ) ){
-		            pointers[0].set( args[ 1 ] );
+		            pointers[0].set( args[ 1 ], true );
 		            pointers[0].setIndexOver();
 		          }
 		        }
