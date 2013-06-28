@@ -1353,6 +1353,7 @@ var Hashtable = (function() {
           '<div class="<%=className%>-label"><span><%=settings.from%></span></div>' +
           '<div class="<%=className%>-label <%=className%>-label-to"><%=settings.predimension%><span><%=settings.to%></span><%=settings.dimension%></div>' +
 
+          // Pointer labels
           '<div class="<%=className%>-value"><div class="<%=className%>-value-label"><%=settings.predimension%><span></span><%=settings.dimension%></div></div>' +
           '<div class="<%=className%>-value <%=className%>-value-to"><div class="<%=className%>-value-label <%=className%>-value-label-to"><%=settings.predimension%><span></span><%=settings.dimension%></div></div>' +
 
@@ -1607,6 +1608,7 @@ var Hashtable = (function() {
 
     var self = this;
 	  var label = this.o.labels[pointer.uid];
+    label.o.removeClass("combined-label")
 	  var prc = pointer.value.prc;
 
 	  var sizes = {
@@ -1622,7 +1624,10 @@ var Hashtable = (function() {
 
       switch( pointer.uid ){
         case 0:
+          // check if labels are touching
           if( sizes.border+sizes.label / 2 > another_label.o.offset().left-this.sizes.domOffset.left ){
+            // add combined class
+            label.o.addClass("combined-label")
             another_label.o.css({ visibility: "hidden" });
         	  another_label.value.html( this.nice( another.value.origin ) );
 
@@ -1630,17 +1635,20 @@ var Hashtable = (function() {
 
           	prc = ( another.value.prc - prc ) / 2 + prc;
           	if( another.value.prc != pointer.value.prc ){
-          	  label.value.html( this.nice(pointer.value.origin) + "&nbsp;&ndash;&nbsp;" + this.nice(another.value.origin) );
+          	  label.value.html( this.nice(pointer.value.origin) + "&nbsp;&#47;&nbsp;" + this.nice(another.value.origin) );
             	sizes.label = label.o.outerWidth();
             	sizes.border = ( prc * this.sizes.domWidth ) / 100;
             }
           } else {
+            label.o.removeClass("combined-label")
           	another_label.o.css({ visibility: "visible" });
           }
           break;
 
         case 1:
+          // check if labels are touching
           if( sizes.border - sizes.label / 2 < another_label.o.offset().left - this.sizes.domOffset.left + another_label.o.outerWidth() ){
+            label.o.addClass("combined-label")
             another_label.o.css({ visibility: "hidden" });
         	  another_label.value.html( this.nice(another.value.origin) );
 
@@ -1648,11 +1656,12 @@ var Hashtable = (function() {
 
           	prc = ( prc - another.value.prc ) / 2 + another.value.prc;
           	if( another.value.prc != pointer.value.prc ){
-          	  label.value.html( this.nice(another.value.origin) + "&nbsp;&ndash;&nbsp;" + this.nice(pointer.value.origin) );
+          	  label.value.html( this.nice(another.value.origin) + "&nbsp;&#47;&nbsp;" + this.nice(pointer.value.origin) );
             	sizes.label = label.o.outerWidth();
             	sizes.border = ( prc * this.sizes.domWidth ) / 100;
             }
           } else {
+            label.o.removeClass("combined-label")
             another_label.o.css({ visibility: "visible" });
           }
           break;
