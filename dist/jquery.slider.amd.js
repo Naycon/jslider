@@ -1394,6 +1394,9 @@ var Hashtable = (function() {
     if( this.settings.onstatechange && $.isFunction( this.settings.onstatechange ) )
       this.onstatechange = this.settings.onstatechange;
 
+    if( this.settings.calculateDifference )
+      this.calculateDifference = this.settings.calculateDifference;
+
     this.is = {
       init: false
     };
@@ -1610,9 +1613,23 @@ var Hashtable = (function() {
       return sizes;
     }
 
+    function displayCalculatedDiff(){
+      var diff = (this.o.pointers[1].value.origin - this.o.pointers[0].value.origin);
+      var formatted = null;
+      if( $.isFunction(this.calculateDifference) ) {
+        formatted = this.calculateDifference(diff);
+      }
+      else {
+        formatted = diff;
+      }
+
+      // display it
+      $("i.v", this.domNode).html(formatted);
+    }
+
     var self = this;
     var label = this.o.labels[pointer.uid];
-    label.o.removeClass("combined-label")
+    label.o.removeClass("combined-label");
     var prc = pointer.value.prc;
 
     var sizes = {
@@ -1631,7 +1648,7 @@ var Hashtable = (function() {
           // check if labels are touching
           if( sizes.border+sizes.label / 2 > another_label.o.offset().left-this.sizes.domOffset.left ){
             // add combined class
-            label.o.addClass("combined-label")
+            label.o.addClass("combined-label");
             another_label.o.css({ visibility: "hidden" });
             another_label.value.html( this.nice( another.value.origin ) );
 
@@ -1644,7 +1661,7 @@ var Hashtable = (function() {
               sizes.border = ( prc * this.sizes.domWidth ) / 100;
             }
           } else {
-            label.o.removeClass("combined-label")
+            label.o.removeClass("combined-label");
             another_label.o.css({ visibility: "visible" });
           }
           break;
@@ -1652,7 +1669,7 @@ var Hashtable = (function() {
         case 1:
           // check if labels are touching
           if( sizes.border - sizes.label / 2 < another_label.o.offset().left - this.sizes.domOffset.left + another_label.o.outerWidth() ){
-            label.o.addClass("combined-label")
+            label.o.addClass("combined-label");
             another_label.o.css({ visibility: "hidden" });
             another_label.value.html( this.nice(another.value.origin) );
 
@@ -1665,10 +1682,13 @@ var Hashtable = (function() {
               sizes.border = ( prc * this.sizes.domWidth ) / 100;
             }
           } else {
-            label.o.removeClass("combined-label")
+            label.o.removeClass("combined-label");
             another_label.o.css({ visibility: "visible" });
           }
           break;
+      }
+      if( this.calculateDifference ) {
+        displayCalculatedDiff.apply(this);
       }
     }
 

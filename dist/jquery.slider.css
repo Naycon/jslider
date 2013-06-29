@@ -11,7 +11,7 @@
   .jslider table tr td { width: 100%; vertical-align: top; }
 
   .jslider .jslider-bg { position: relative; }
-  .jslider .jslider-bg i { height: 5px; position: absolute; font-size: 0; top: 0; }
+  .jslider .jslider-bg i { height: 5px; position: absolute; top: 0; }
   .jslider .jslider-bg .l { width: 10%; background-position: 0 0; left: 0; }
   .jslider .jslider-bg .f { width: 80%; left: 10%; background-repeat: repeat-x; background-position: 0 -20px; }
   .jslider .jslider-bg .r { width: 10%; left: 90%; background-position: right 0; }
