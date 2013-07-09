@@ -1354,7 +1354,7 @@ var Hashtable = (function() {
           '<div class="<%=className%>-pointer"></div>' +
           '<div class="<%=className%>-pointer <%=className%>-pointer-to"></div>' +
 
-          '<div class="<%=className%>-label"><span><%=settings.from%></span></div>' +
+          '<div class="<%=className%>-label"><%=settings.predimension%><span><%=settings.from%></span></div>' +
           '<div class="<%=className%>-label <%=className%>-label-to"><%=settings.predimension%><span><%=settings.to%></span><%=settings.dimension%></div>' +
 
           // Pointer labels
@@ -1388,8 +1388,11 @@ var Hashtable = (function() {
       throw "jquery.slider: INPUT element does not have a value.";
     }
 
-    if( this.settings.calculate && $.isFunction( this.settings.calculate ) )
-      this.nice = this.settings.calculate;
+    if( this.settings.calculateFrom && $.isFunction( this.settings.calculateFrom ) )
+      this.niceFrom = this.settings.calculateFrom;
+
+    if( this.settings.calculateTo && $.isFunction( this.settings.calculateTo ) )
+      this.niceTo = this.settings.calculateTo;
 
     if( this.settings.onstatechange && $.isFunction( this.settings.onstatechange ) )
       this.onstatechange = this.settings.onstatechange;
@@ -1580,11 +1583,16 @@ var Hashtable = (function() {
     if( this.o.pointers[0] && this.o.pointers[1] )
       this.o.value.css({ left: this.o.pointers[0].value.prc + "%", width: ( this.o.pointers[1].value.prc - this.o.pointers[0].value.prc ) + "%" });
 
-    this.o.labels[pointer.uid].value.html(
-      this.nice(
-        pointer.value.origin
-      )
-    );
+    switch( pointer.uid ){
+      case 0:
+        labelValue = this.niceFrom( pointer.value.origin );
+        break;
+      case 1:
+        labelValue = this.niceTo( pointer.value.origin );
+        break;
+    }
+
+    this.o.labels[pointer.uid].value.html( labelValue );
 
     // redraw position of labels
     this.redrawLabels( pointer );
@@ -1614,10 +1622,12 @@ var Hashtable = (function() {
     }
 
     function displayCalculatedDiff(){
-      var diff = (this.o.pointers[1].value.origin - this.o.pointers[0].value.origin);
+      fromValue = this.o.pointers[0].value.origin;
+      toValue = this.o.pointers[1].value.origin;
+      var diff = (toValue - fromValue);
       var formatted = null;
       if( $.isFunction(this.calculateDifference) ) {
-        formatted = this.calculateDifference(diff);
+        formatted = this.calculateDifference(fromValue, toValue, diff);
       }
       else {
         formatted = diff;
@@ -1650,13 +1660,13 @@ var Hashtable = (function() {
             // add combined class
             label.o.addClass("combined-label");
             another_label.o.css({ visibility: "hidden" });
-            another_label.value.html( this.nice( another.value.origin ) );
+            another_label.value.html( this.niceTo( another.value.origin ) );
 
             label.o.css({ visibility: "visible" });
 
             prc = ( another.value.prc - prc ) / 2 + prc;
             if( another.value.prc != pointer.value.prc ){
-              label.value.html( this.nice(pointer.value.origin) + "&nbsp;&#47;&nbsp;" + this.nice(another.value.origin) );
+              label.value.html( this.niceFrom(pointer.value.origin) + "&nbsp;&#47;&nbsp;" + this.niceTo(another.value.origin) );
               sizes.label = label.o.outerWidth();
               sizes.border = ( prc * this.sizes.domWidth ) / 100;
             }
@@ -1671,13 +1681,13 @@ var Hashtable = (function() {
           if( sizes.border - sizes.label / 2 < another_label.o.offset().left - this.sizes.domOffset.left + another_label.o.outerWidth() ){
             label.o.addClass("combined-label");
             another_label.o.css({ visibility: "hidden" });
-            another_label.value.html( this.nice(another.value.origin) );
+            another_label.value.html( this.niceFrom(another.value.origin) );
 
             label.o.css({ visibility: "visible" });
 
             prc = ( prc - another.value.prc ) / 2 + another.value.prc;
             if( another.value.prc != pointer.value.prc ){
-              label.value.html( this.nice(another.value.origin) + "&nbsp;&#47;&nbsp;" + this.nice(pointer.value.origin) );
+              label.value.html( this.niceFrom(another.value.origin) + "&nbsp;&#47;&nbsp;" + this.niceTo(pointer.value.origin) );
               sizes.label = label.o.outerWidth();
               sizes.border = ( prc * this.sizes.domWidth ) / 100;
             }
@@ -1753,7 +1763,8 @@ var Hashtable = (function() {
 
     var value = "";
     $.each( this.o.pointers, function(i){
-      if( this.value.prc != undefined && !isNaN(this.value.prc) ) value += (i > 0 ? ";" : "") + $this.prcToValue( this.value.prc );
+      if( this.value.prc != undefined && !isNaN(this.value.prc) )
+        value += (i > 0 ? ";" : "") + $this.prcToValue( this.value.prc );
     });
     return value;
   };
@@ -1832,8 +1843,8 @@ var Hashtable = (function() {
     return value;
   };
 
-  jSlider.prototype.nice = function( value ){
-    value = value.toString().replace(/,/gi, ".").replace(/ /gi, "");;
+  jSlider.prototype.defaultNice = function( value ){
+    value = value.toString().replace(/,/gi, ".").replace(/ /gi, "");
 
     if( $.formatNumber ){
       return $.formatNumber( new Number(value), this.settings.format || {} ).replace( /-/gi, "&minus;" );
@@ -1843,6 +1854,10 @@ var Hashtable = (function() {
       return new Number(value);
     }
   };
+
+  jSlider.prototype.niceTo = jSlider.prototype.defaultNice;
+  jSlider.prototype.niceFrom = jSlider.prototype.defaultNice;
+  jSlider.prototype.nice = jSlider.prototype.defaultNice;
 
 
   function jSliderPointer(){
