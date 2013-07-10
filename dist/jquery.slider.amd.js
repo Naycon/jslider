@@ -1388,11 +1388,11 @@ var Hashtable = (function() {
       throw "jquery.slider: INPUT element does not have a value.";
     }
 
-    if( this.settings.calculateFrom && $.isFunction( this.settings.calculateFrom ) )
-      this.niceFrom = this.settings.calculateFrom;
+    if( this.settings.translateFrom && $.isFunction( this.settings.translateFrom ) )
+      this.niceFrom = this.settings.translateFrom;
 
-    if( this.settings.calculateTo && $.isFunction( this.settings.calculateTo ) )
-      this.niceTo = this.settings.calculateTo;
+    if( this.settings.translateTo && $.isFunction( this.settings.translateTo ) )
+      this.niceTo = this.settings.translateTo;
 
     if( this.settings.onstatechange && $.isFunction( this.settings.onstatechange ) )
       this.onstatechange = this.settings.onstatechange;
