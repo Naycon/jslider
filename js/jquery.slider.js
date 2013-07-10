@@ -228,6 +228,9 @@
     if( this.settings.calculateDifference )
       this.calculateDifference = this.settings.calculateDifference;
 
+    if ( this.settings.calculateLeftValue )
+      this.calculateLeftValue = this.settings.calculateLeftValue;
+
     this.is = {
       init: false
     };
@@ -316,6 +319,7 @@
     });
 
     this.o.value = this.domNode.find(".v");
+    this.o.leftValue = this.domNode.find(".l");
     this.is.init = true;
 
     $.each(this.o.pointers, function(i){
@@ -339,7 +343,7 @@
 
   jSlider.prototype.setPointersIndex = function( i ){
     $.each(this.getPointers(), function(i){
-      this.index( i );
+      this.index( i + 1 );
     });
   };
 
@@ -407,9 +411,11 @@
 
     this.setValue();
 
-    // redraw range line
-    if( this.o.pointers[0] && this.o.pointers[1] )
+    // redraw range line and left line
+    if( this.o.pointers[0] && this.o.pointers[1] ) {
       this.o.value.css({ left: this.o.pointers[0].value.prc + "%", width: ( this.o.pointers[1].value.prc - this.o.pointers[0].value.prc ) + "%" });
+      this.o.leftValue.css({ left: 0, right: this.o.pointers[0].value.prc + "%", width: this.o.pointers[0].value.prc + "%" });
+    }
 
     switch( pointer.uid ){
       case 0:
@@ -463,6 +469,15 @@
 
       // display it
       $("i.v", this.domNode).html(formatted);
+    }
+
+    function displayLeftValue(){
+      if( $.isFunction(this.calculateLeftValue) ) {
+        leftValue = this.calculateLeftValue(this.o.pointers[0].value.origin, this.o.pointers[1].value.origin)
+      }
+
+      // display left value
+      $("i.l", this.domNode).html(leftValue);
     }
 
     var self = this;
@@ -527,6 +542,9 @@
       }
       if( this.calculateDifference ) {
         displayCalculatedDiff.apply(this);
+      }
+      if( this.calculateLeftValue ){
+        displayLeftValue.apply(this);
       }
     }
 
