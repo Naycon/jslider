@@ -1347,8 +1347,8 @@ var Hashtable = (function() {
       '<span class="<%=className%>">' +
         '<table><tr><td>' +
           '<div class="<%=className%>-bg">' +
-            '<i class="l"></i><i class="f"></i><i class="r"></i>' +
-            '<i class="v"></i>' +
+            '<i class="l"><span></span></i><i class="f"></i><i class="r"></i>' +
+            '<i class="v"><span></span></i>' +
           '</div>' +
 
           '<div class="<%=className%>-pointer"></div>' +
@@ -1583,10 +1583,26 @@ var Hashtable = (function() {
 
     this.setValue();
 
+    function addMiniLabelToElement(element, prc) {
+      if(prc <= 13) {
+        element.addClass("mini-label");
+      }
+      else {
+        element.removeClass("mini-label");
+      }
+    }
+
     // redraw range line and left line
     if( this.o.pointers[0] && this.o.pointers[1] ) {
-      this.o.value.css({ left: this.o.pointers[0].value.prc + "%", width: ( this.o.pointers[1].value.prc - this.o.pointers[0].value.prc ) + "%" });
-      this.o.leftValue.css({ left: 0, right: this.o.pointers[0].value.prc + "%", width: this.o.pointers[0].value.prc + "%" });
+      var leftWidth = this.o.pointers[0].value.prc;
+      var middleWidth = this.o.pointers[1].value.prc - leftWidth;
+
+      this.o.value.css({ left: this.o.pointers[0].value.prc + "%", width: ( middleWidth ) + "%" });
+      this.o.leftValue.css({ left: 0, right: leftWidth + "%", width: leftWidth + "%" });
+
+
+      addMiniLabelToElement($("i.l"), leftWidth);
+      addMiniLabelToElement($("i.v"), middleWidth);
     }
 
     switch( pointer.uid ){
@@ -1628,8 +1644,8 @@ var Hashtable = (function() {
     }
 
     function displayCalculatedDiff(){
-      fromValue = this.o.pointers[0].value.origin;
-      toValue = this.o.pointers[1].value.origin;
+      var fromValue = this.o.pointers[0].value.origin;
+      var toValue = this.o.pointers[1].value.origin;
       var diff = (toValue - fromValue);
       var formatted = null;
       if( $.isFunction(this.calculateDifference) ) {
@@ -1640,16 +1656,16 @@ var Hashtable = (function() {
       }
 
       // display it
-      $("i.v", this.domNode).html(formatted);
+      $("i.v span", this.domNode).html(formatted);
     }
 
     function displayLeftValue(){
       if( $.isFunction(this.calculateLeftValue) ) {
-        leftValue = this.calculateLeftValue(this.o.pointers[0].value.origin, this.o.pointers[1].value.origin)
+        var leftValue = this.calculateLeftValue(this.o.pointers[0].value.origin, this.o.pointers[1].value.origin)
       }
 
       // display left value
-      $("i.l", this.domNode).html(leftValue);
+      $("i.l span", this.domNode).html(leftValue);
     }
 
     var self = this;
