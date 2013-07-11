@@ -1697,7 +1697,7 @@ var Hashtable = (function() {
 
             prc = ( another.value.prc - prc ) / 2 + prc;
             if( another.value.prc != pointer.value.prc ){
-              label.value.html( this.niceFrom(pointer.value.origin) + "&nbsp;&#47;&nbsp;" + this.niceTo(another.value.origin) );
+              label.value.html( this.niceFrom(pointer.value.origin) + "&nbsp;&#47;&nbsp;" + this.settings.predimension + this.niceTo(another.value.origin) );
               sizes.label = label.o.outerWidth();
               sizes.border = ( prc * this.sizes.domWidth ) / 100;
             }
@@ -1718,7 +1718,7 @@ var Hashtable = (function() {
 
             prc = ( prc - another.value.prc ) / 2 + another.value.prc;
             if( another.value.prc != pointer.value.prc ){
-              label.value.html( this.niceFrom(another.value.origin) + "&nbsp;&#47;&nbsp;" + this.niceTo(pointer.value.origin) );
+              label.value.html( this.niceFrom(another.value.origin) + "&nbsp;&#47;&nbsp;" + this.settings.predimension + this.niceTo(pointer.value.origin) );
               sizes.label = label.o.outerWidth();
               sizes.border = ( prc * this.sizes.domWidth ) / 100;
             }
