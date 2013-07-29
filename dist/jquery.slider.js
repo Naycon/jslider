@@ -1580,7 +1580,7 @@ var Hashtable = (function() {
     this.setValue();
 
     function addMiniLabelToElement(element, prc) {
-      if(prc <= 13) {
+      if(prc <= 18) {
         element.addClass("mini-label");
       }
       else {
