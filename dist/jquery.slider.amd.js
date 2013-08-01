@@ -1228,6 +1228,13 @@ var Hashtable = (function() {
       return val != null;
     };
 
+    function updatePointer(pointer, value){
+      if( isDefAndNotNull( pointer ) && isDefAndNotNull( value ) ){
+        pointer.set( value, true);
+        pointer.setIndexOver();
+      }
+    };
+
     this.each(function(){
       var self = $.slider( this, action );
 
@@ -1237,14 +1244,16 @@ var Hashtable = (function() {
           case "value":
             if( isDef( args[ 1 ] ) && isDef( args[ 2 ] ) ){
               var pointers = self.getPointers();
-              if( isDefAndNotNull( pointers[0] ) && isDefAndNotNull( args[1] ) ){
-                pointers[0].set( args[ 1 ], true );
-                pointers[0].setIndexOver();
-              }
 
-              if( isDefAndNotNull( pointers[1] ) && isDefAndNotNull( args[2] ) ){
-                pointers[1].set( args[ 2 ], true );
-                pointers[1].setIndexOver();
+              // if pointer[0]'s new value is greater then pointer[1]'s exsiting
+              // value, update pointer[1] first.
+              if( isDefAndNotNull(pointers[1]) && (parseInt(args[1]) > pointers[1].value.origin) ){
+                updatePointer(pointers[1], args[2]);
+                updatePointer(pointers[0], args[1]);
+              }
+              else {
+                updatePointer(pointers[0], args[1]);
+                updatePointer(pointers[1], args[2]);
               }
             }
 
