@@ -1342,7 +1342,8 @@ var Hashtable = (function() {
       format: { format: "#,##0.##" },
       value: "5;7",
       predimension: "",
-      dimension: ""
+      dimension: "",
+      miniLabelPrc: 0
     },
 
     className: "jslider",
@@ -1429,7 +1430,8 @@ var Hashtable = (function() {
         from: this.nice( this.settings.from ),
         to: this.nice( this.settings.to ),
         predimension: this.settings.predimension,
-        dimension: this.settings.dimension
+        dimension: this.settings.dimension,
+        miniLabelPrc: this.settings.miniLabelPrc
       },
       scale: this.generateScale()
     }) );
@@ -1589,7 +1591,7 @@ var Hashtable = (function() {
     this.setValue();
 
     function addMiniLabelToElement(element, prc) {
-      if(prc <= 18) {
+      if(prc <= this.settings.miniLabelPrc) {
         element.addClass("mini-label");
       }
       else {
@@ -1606,8 +1608,8 @@ var Hashtable = (function() {
       this.o.leftValue.css({ left: 0, right: leftWidth + "%", width: leftWidth + "%" });
 
 
-      addMiniLabelToElement($("i.l"), leftWidth);
-      addMiniLabelToElement($("i.v"), middleWidth);
+      addMiniLabelToElement.apply(this, [$("i.l"), leftWidth]);
+      addMiniLabelToElement.apply(this, [$("i.v"), middleWidth]);
     }
 
     switch( pointer.uid ){
