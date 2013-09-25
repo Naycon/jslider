@@ -138,6 +138,10 @@
             self.setSkin( args[1] );
 
             break;
+
+          case "triggerCallback":
+            self.settings.callback.call( self, self.getValue() );
+            break;
         };
 
       }
