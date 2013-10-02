@@ -1656,8 +1656,8 @@ $.fn.getHiddenDimensions = function(includeMargin) {
       this.o.leftValue.css({ left: 0, right: leftWidth + "%", width: leftWidth + "%" });
 
 
-      addMiniLabelToElement.apply(this, [$("i.l"), leftWidth]);
-      addMiniLabelToElement.apply(this, [$("i.v"), middleWidth]);
+      addMiniLabelToElement.apply(this, [$("i.l", this.domNode), leftWidth]);
+      addMiniLabelToElement.apply(this, [$("i.v", this.domNode), middleWidth]);
     }
 
     switch( pointer.uid ){
