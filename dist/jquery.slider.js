@@ -1167,6 +1167,50 @@ var Hashtable = (function() {
 })( jQuery );
 
 /**
+ * From a blog post by Tim Banks:
+ * http://www.foliotek.com/devblog/getting-the-width-of-a-hidden-element-with-jquery-using-width/
+ */
+
+//Optional parameter includeMargin is used when calculating outer dimensions
+(function($) {
+$.fn.getHiddenDimensions = function(includeMargin) {
+    var $item = this,
+        props = { position: 'absolute', visibility: 'hidden', display: 'block' },
+        dim = { width:0, height:0, innerWidth: 0, innerHeight: 0,outerWidth: 0,outerHeight: 0 },
+        $hiddenParents = $item.parents().andSelf().not(':visible'),
+        includeMargin = (includeMargin == null)? false : includeMargin;
+
+    var oldProps = [];
+    $hiddenParents.each(function() {
+        var old = {};
+
+        for ( var name in props ) {
+            old[ name ] = this.style[ name ];
+            this.style[ name ] = props[ name ];
+        }
+
+        oldProps.push(old);
+    });
+
+    dim.width = $item.width();
+    dim.outerWidth = $item.outerWidth(includeMargin);
+    dim.innerWidth = $item.innerWidth();
+    dim.height = $item.height();
+    dim.innerHeight = $item.innerHeight();
+    dim.outerHeight = $item.outerHeight(includeMargin);
+
+    $hiddenParents.each(function(i) {
+        var old = oldProps[i];
+        for ( var name in props ) {
+            this.style[ name ] = old[ name ];
+        }
+    });
+
+    return dim;
+}
+}(jQuery));
+
+/**
  * jquery.slider - Slider ui control in jQuery
  *
  * Written by
@@ -1550,7 +1594,7 @@ var Hashtable = (function() {
 
   jSlider.prototype.drawScale = function(){
     this.domNode.find(OPTIONS.selector + "scale span ins").each(function(){
-      $(this).css({ marginLeft: -$(this).outerWidth()/2 });
+      $(this).css({ marginLeft: -$(this).getHiddenDimensions().outerWidth/2 });
     });
   };
 
@@ -1685,7 +1729,7 @@ var Hashtable = (function() {
     var prc = pointer.value.prc;
 
     var sizes = {
-      label: label.o.outerWidth(),
+      label: label.o.getHiddenDimensions().outerWidth,
       right: false,
       border: ( prc * this.sizes.domWidth ) / 100
     };
@@ -1694,11 +1738,12 @@ var Hashtable = (function() {
       // glue if near;
       var another = this.o.pointers[1-pointer.uid];
       var another_label = this.o.labels[another.uid];
+      var isVisible = another_label.o.is(":visible");
 
       switch( pointer.uid ){
         case 0:
           // check if labels are touching
-          if( sizes.border+sizes.label / 2 > another_label.o.offset().left-this.sizes.domOffset.left ){
+          if( isVisible && sizes.border+sizes.label / 2 > another_label.o.offset().left-this.sizes.domOffset.left ){
             // add combined class
             label.o.addClass("combined-label");
             another_label.o.css({ visibility: "hidden" });
@@ -1709,7 +1754,7 @@ var Hashtable = (function() {
             prc = ( another.value.prc - prc ) / 2 + prc;
             if( another.value.prc != pointer.value.prc ){
               label.value.html( this.niceFrom(pointer.value.origin) + "&nbsp;&#47;&nbsp;" + this.settings.predimension + this.niceTo(another.value.origin) );
-              sizes.label = label.o.outerWidth();
+              sizes.label = label.o.getHiddenDimensions().outerWidth;
               sizes.border = ( prc * this.sizes.domWidth ) / 100;
             }
           } else {
@@ -1720,7 +1765,7 @@ var Hashtable = (function() {
 
         case 1:
           // check if labels are touching
-          if( sizes.border - sizes.label / 2 < another_label.o.offset().left - this.sizes.domOffset.left + another_label.o.outerWidth() ){
+          if( isVisible && sizes.border - sizes.label / 2 < another_label.o.offset().left - this.sizes.domOffset.left + another_label.o.getHiddenDimensions().outerWidth ){
             label.o.addClass("combined-label");
             another_label.o.css({ visibility: "hidden" });
             another_label.value.html( this.niceFrom(another.value.origin) );
@@ -1730,7 +1775,7 @@ var Hashtable = (function() {
             prc = ( prc - another.value.prc ) / 2 + another.value.prc;
             if( another.value.prc != pointer.value.prc ){
               label.value.html( this.niceFrom(another.value.origin) + "&nbsp;&#47;&nbsp;" + this.settings.predimension + this.niceTo(pointer.value.origin) );
-              sizes.label = label.o.outerWidth();
+              sizes.label = label.o.getHiddenDimensions().outerWidth;
               sizes.border = ( prc * this.sizes.domWidth ) / 100;
             }
           } else {
@@ -1752,7 +1797,7 @@ var Hashtable = (function() {
     /* draw second label */
     if( another_label ){
       var sizes = {
-        label: another_label.o.outerWidth(),
+        label: another_label.o.getHiddenDimensions().outerWidth,
         right: false,
         border: ( another.value.prc * this.sizes.domWidth ) / 100
       };
@@ -1776,11 +1821,11 @@ var Hashtable = (function() {
           var label_left = label.o.offset().left - this.sizes.domOffset.left;
 
           var limit = this.o.limits[0];
-          if( label_left < limit.outerWidth() )
+          if( label_left < limit.getHiddenDimensions().outerWidth )
             limits[0] = false;
 
           var limit = this.o.limits[1];
-          if( label_left + label.o.outerWidth() > this.sizes.domWidth - limit.outerWidth() )
+          if( label_left + label.o.getHiddenDimensions().outerWidth > this.sizes.domWidth - limit.getHiddenDimensions().outerWidth )
             limits[1] = false;
         }
 

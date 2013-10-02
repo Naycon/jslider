@@ -382,7 +382,7 @@
 
   jSlider.prototype.drawScale = function(){
     this.domNode.find(OPTIONS.selector + "scale span ins").each(function(){
-      $(this).css({ marginLeft: -$(this).outerWidth()/2 });
+      $(this).css({ marginLeft: -$(this).getHiddenDimensions().outerWidth/2 });
     });
   };
 
@@ -517,7 +517,7 @@
     var prc = pointer.value.prc;
 
     var sizes = {
-      label: label.o.outerWidth(),
+      label: label.o.getHiddenDimensions().outerWidth,
       right: false,
       border: ( prc * this.sizes.domWidth ) / 100
     };
@@ -526,11 +526,12 @@
       // glue if near;
       var another = this.o.pointers[1-pointer.uid];
       var another_label = this.o.labels[another.uid];
+      var isVisible = another_label.o.is(":visible");
 
       switch( pointer.uid ){
         case 0:
           // check if labels are touching
-          if( sizes.border+sizes.label / 2 > another_label.o.offset().left-this.sizes.domOffset.left ){
+          if( isVisible && sizes.border+sizes.label / 2 > another_label.o.offset().left-this.sizes.domOffset.left ){
             // add combined class
             label.o.addClass("combined-label");
             another_label.o.css({ visibility: "hidden" });
@@ -541,7 +542,7 @@
             prc = ( another.value.prc - prc ) / 2 + prc;
             if( another.value.prc != pointer.value.prc ){
               label.value.html( this.niceFrom(pointer.value.origin) + "&nbsp;&#47;&nbsp;" + this.settings.predimension + this.niceTo(another.value.origin) );
-              sizes.label = label.o.outerWidth();
+              sizes.label = label.o.getHiddenDimensions().outerWidth;
               sizes.border = ( prc * this.sizes.domWidth ) / 100;
             }
           } else {
@@ -552,7 +553,7 @@
 
         case 1:
           // check if labels are touching
-          if( sizes.border - sizes.label / 2 < another_label.o.offset().left - this.sizes.domOffset.left + another_label.o.outerWidth() ){
+          if( isVisible && sizes.border - sizes.label / 2 < another_label.o.offset().left - this.sizes.domOffset.left + another_label.o.getHiddenDimensions().outerWidth ){
             label.o.addClass("combined-label");
             another_label.o.css({ visibility: "hidden" });
             another_label.value.html( this.niceFrom(another.value.origin) );
@@ -562,7 +563,7 @@
             prc = ( prc - another.value.prc ) / 2 + another.value.prc;
             if( another.value.prc != pointer.value.prc ){
               label.value.html( this.niceFrom(another.value.origin) + "&nbsp;&#47;&nbsp;" + this.settings.predimension + this.niceTo(pointer.value.origin) );
-              sizes.label = label.o.outerWidth();
+              sizes.label = label.o.getHiddenDimensions().outerWidth;
               sizes.border = ( prc * this.sizes.domWidth ) / 100;
             }
           } else {
@@ -584,7 +585,7 @@
     /* draw second label */
     if( another_label ){
       var sizes = {
-        label: another_label.o.outerWidth(),
+        label: another_label.o.getHiddenDimensions().outerWidth,
         right: false,
         border: ( another.value.prc * this.sizes.domWidth ) / 100
       };
@@ -608,11 +609,11 @@
           var label_left = label.o.offset().left - this.sizes.domOffset.left;
 
           var limit = this.o.limits[0];
-          if( label_left < limit.outerWidth() )
+          if( label_left < limit.getHiddenDimensions().outerWidth )
             limits[0] = false;
 
           var limit = this.o.limits[1];
-          if( label_left + label.o.outerWidth() > this.sizes.domWidth - limit.outerWidth() )
+          if( label_left + label.o.getHiddenDimensions().outerWidth > this.sizes.domWidth - limit.getHiddenDimensions().outerWidth )
             limits[1] = false;
         }
 

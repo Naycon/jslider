@@ -10,6 +10,7 @@ module.exports = function(grunt) {
       'js/jquery.dependClass-0.1.js',
       'js/jquery.numberformatter-1.2.3.js',
       'js/draggable-0.2.js',
+      'js/getHiddenDimensions.js',
       'js/jquery.slider.js'
     ];
 
